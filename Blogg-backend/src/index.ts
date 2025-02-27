@@ -1,9 +1,17 @@
-import { Hono } from 'hono'
+import { Hono } from "hono";
+import { userRouter } from "./routes/user";
 
-const app = new Hono()
+export const app = new Hono<{
+  Bindings: {
+    DATABASE_URL: string;
+    JWT_SECRET: string;
+  };
+}>();
 
-app.get('/', (c) => {
-  return c.text('Hello Hono!')
-})
+app.get("/", (c) => {
+  return c.text("Welcome to Blogg backend");
+});
 
-export default app
+app.route("/api/v1/user", userRouter);
+
+export default app;
