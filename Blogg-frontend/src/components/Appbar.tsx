@@ -23,10 +23,7 @@ const Appbar = () => {
       // console.log(response)
       setUserState(response.data.email);
     } catch (error) {
-      console.error(
-        "Failed to fetch user:",
-        error.response?.data?.message || error
-      );
+      console.error("Failed to fetch user:", error);
       handleLogout(); // Auto logout if token is invalid
     }
   };
@@ -92,10 +89,18 @@ const Appbar = () => {
             <>
               <li>
                 <Link
-                  to={"/blog"}
+                  to={"/blogs"}
                   className="text-gray-600 hover:text-green-500"
                 >
-                  Blog
+                  Blogs
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to={"/write"}
+                  className="text-gray-600 hover:text-green-500"
+                >
+                  Write
                 </Link>
               </li>
               <li>
