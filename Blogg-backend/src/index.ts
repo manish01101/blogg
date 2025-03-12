@@ -1,6 +1,7 @@
 import { Hono } from "hono";
 import { userRouter } from "./routes/user";
 import blogRouter from "./routes/blog";
+import { cors } from "hono/cors";
 
 export const app = new Hono<{
   Bindings: {
@@ -8,6 +9,8 @@ export const app = new Hono<{
     JWT_SECRET: string;
   };
 }>();
+
+app.use('/api/*', cors())
 
 app.get("/", (c) => {
   return c.text("Welcome to Blogg backend");
