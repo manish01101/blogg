@@ -6,3 +6,4 @@
 5. Prisma as the ORM, with connection pooling
 6. Postgres as the database
 7. jwt for authentication
+8. bcryptjs for password hashing
