@@ -54,9 +54,6 @@ blogRouter.post("/", async (c) => {
     let coverImageUrl: string | null =
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTXn1LxNpgOr5fxc_d3q4ObDF8C2vNn-3tvAQ&s";
 
-    // perform actual process to store img in s3, etc
-
-    
     // Save post to database
     const post = await prisma.post.create({
       data: {
