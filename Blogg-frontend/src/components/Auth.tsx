@@ -1,6 +1,6 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios, { AxiosError } from "axios"; // Import AxiosError
+import axios from "axios";
 import { BACKEND_URL } from "../config";
 import { userAtom } from "../store/atoms/user";
 import { useAtomState } from "@zedux/react";
@@ -30,20 +30,23 @@ const Auth = ({ type }: { type: "signup" | "signin" }) => {
       if (jwt) {
         localStorage.setItem("token", jwt);
         localStorage.setItem("email", email);
-        setUserState(email); // Update user state correctly
+        setUserState(email);
         alert(message);
-        navigate("/");
       } else {
         alert("Unexpected response from server.");
       }
     } catch (error) {
-      const axiosError = error as AxiosError; // Type assertion
-      const msg =
-        axiosError.response?.data?.message || "An unknown error occurred";
-      alert(`Error while ${type}! \n${msg}`);
-      console.log(axiosError);
+      console.error(error);
+      alert(`Error while ${type}!`);
     }
   }
+  
+  // Navigate after userState updates
+  useEffect(() => {
+    if (userState) {
+      navigate("/");
+    }
+  }, [userState, navigate]);
 
   return (
     <div className="px-4 h-screen flex justify-center flex-col">
