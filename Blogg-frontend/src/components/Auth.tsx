@@ -1,19 +1,20 @@
 import { ChangeEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import axios, { AxiosError } from "axios"; // Import AxiosError
 import { BACKEND_URL } from "../config";
+import { userAtom } from "../store/atoms/user";
+import { useAtomState } from "@zedux/react";
 
 interface SignupInput {
-  name: string;
-  username: string;
+  email: string;
   password: string;
 }
 
 const Auth = ({ type }: { type: "signup" | "signin" }) => {
+  const [userState, setUserState] = useAtomState(userAtom);
   const navigate = useNavigate();
   const [postInputs, setPostInputs] = useState<SignupInput>({
-    name: "",
-    username: "",
+    email: "",
     password: "",
   });
 
@@ -23,12 +24,24 @@ const Auth = ({ type }: { type: "signup" | "signin" }) => {
         `${BACKEND_URL}/api/v1/user/${type === "signup" ? "signup" : "signin"}`,
         postInputs
       );
-      const jwt = response.data;
-      localStorage.setItem("token", jwt);
-      navigate("/blog");
+      // console.log("hi res", response);
+      const { email, jwt, message } = response.data;
+
+      if (jwt) {
+        localStorage.setItem("token", jwt);
+        localStorage.setItem("email", email);
+        setUserState(email); // Update user state correctly
+        alert(message);
+        navigate("/");
+      } else {
+        alert("Unexpected response from server.");
+      }
     } catch (error) {
-      alert("while signup");
-      console.log(error);
+      const axiosError = error as AxiosError; // Type assertion
+      const msg =
+        axiosError.response?.data?.message || "An unknown error occurred";
+      alert(`Error while ${type}! \n${msg}`);
+      console.log(axiosError);
     }
   }
 
@@ -53,26 +66,13 @@ const Auth = ({ type }: { type: "signup" | "signin" }) => {
             </div>
           </div>
           <div>
-            {type === "signup" ? (
-              <LabelledInput
-                label="Name"
-                placeholder="manish"
-                onChange={(e) => {
-                  setPostInputs((c) => ({
-                    ...c,
-                    name: e.target.value,
-                  }));
-                }}
-              />
-            ) : null}
-
             <LabelledInput
-              label="Username"
-              placeholder="manish@gmail.com"
+              label="Email"
+              placeholder="user@gmail.com"
               onChange={(e) => {
                 setPostInputs((c) => ({
                   ...c,
-                  username: e.target.value,
+                  email: e.target.value,
                 }));
               }}
             />
@@ -109,6 +109,7 @@ interface LabelledInputType {
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
   type?: string;
 }
+
 function LabelledInput({
   label,
   placeholder,
@@ -123,7 +124,7 @@ function LabelledInput({
       <input
         onChange={onChange}
         type={type || "text"}
-        id="first_name"
+        id={label}
         className="bg-gray-50 border border-gray-300 text-black text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
         placeholder={placeholder}
         required
