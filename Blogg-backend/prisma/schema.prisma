@@ -22,11 +22,14 @@ model User {
 }
 
 model Post {
-  id         String  @id @default(uuid())
+  id         String   @id @default(uuid())
   title      String
   content    String
   coverImage String?
-  published  Boolean @default(false)
-  author     User    @relation(fields: [authorId], references: [id])
+  published  Boolean  @default(false)
+  author     User     @relation(fields: [authorId], references: [id])
   authorId   String
+  authorName String?
+  likes      Int      @default(0)
+  createdAt  DateTime @default(now())
 }

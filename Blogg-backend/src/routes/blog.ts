@@ -45,6 +45,7 @@ blogRouter.post("/", async (c) => {
     const title = formData.get("title") as string;
     const content = formData.get("content") as string;
     const coverImage = formData.get("coverImage") as File | null;
+    const authorName = formData.get("authorName") as string;
 
     if (!title || !content) {
       return c.json({ message: "Title and content are required!" }, 400);
@@ -52,7 +53,7 @@ blogRouter.post("/", async (c) => {
 
     // default img url
     let coverImageUrl: string | null =
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTXn1LxNpgOr5fxc_d3q4ObDF8C2vNn-3tvAQ&s";
+      "https://png.pngtree.com/png-vector/20231114/ourmid/pngtree-red-blog-logo-title-graphic-png-image_10558747.png";
 
     // Save post to database
     const post = await prisma.post.create({
@@ -62,6 +63,7 @@ blogRouter.post("/", async (c) => {
         authorId: c.get("userId"),
         published: true,
         coverImage: coverImageUrl,
+        authorName
       },
     });
 
@@ -143,6 +145,9 @@ blogRouter.get("/user/bulk", async (c) => {
         title: true,
         content: true,
         coverImage: true,
+        authorName: true,
+        likes: true,
+        createdAt: true
       },
     });
     return c.json({ posts });
