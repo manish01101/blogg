@@ -8,21 +8,29 @@ import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import CreateBlog from "./pages/CreateBlog";
 import BlogPage from "./pages/BlogPage";
+import Appbar from "./components/Appbar";
+import Footer from "./components/Footer";
 
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/blogs" element={<Blogs />} />
-        <Route path="/blog/:id" element={<BlogPage />} />
-        <Route path="/write" element={<CreateBlog />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/signin" element={<Signin />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
+      <div className="flex flex-col min-h-screen">
+        <Appbar />
+        <div className="flex-grow">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/blogs" element={<Blogs />} />
+            <Route path="/blog/:id" element={<BlogPage />} />
+            <Route path="/write" element={<CreateBlog />} />
+            <Route path="/contact" element={<Contact />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/signin" element={<Signin />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </div>
+        <Footer />
+      </div>
     </BrowserRouter>
   );
 }

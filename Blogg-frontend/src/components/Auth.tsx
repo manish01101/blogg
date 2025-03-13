@@ -40,7 +40,7 @@ const Auth = ({ type }: { type: "signup" | "signin" }) => {
       alert(`Error while ${type}!`);
     }
   }
-  
+
   // Navigate after userState updates
   useEffect(() => {
     if (userState) {

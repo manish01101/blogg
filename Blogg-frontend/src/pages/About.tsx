@@ -1,12 +1,6 @@
-import Appbar from "../components/Appbar";
-import Footer from "../components/Footer";
-
 const About = () => {
   return (
-    <div className="min-h-screen flex flex-col bg-[#F7F4ED]">
-      {/* Appbar */}
-      <Appbar />
-
+    <div className="flex flex-col">
       {/* Main Content */}
       <main className="flex-grow">
         <div className="p-5 text-center">
@@ -59,9 +53,6 @@ const About = () => {
           </div>
         </section>
       </main>
-
-      {/* Footer */}
-      <Footer />
     </div>
   );
 };
