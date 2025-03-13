@@ -1,14 +1,14 @@
 import { useEffect, useState } from "react";
-import { useAtomState } from "@zedux/react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { userAtom } from "../store/atoms/user";
 import { BACKEND_URL } from "../config";
 import { FiMenu, FiX } from "react-icons/fi";
+import { useRecoilState } from "recoil";
+import { userAtom } from "../store/atoms/user";
 
 const Appbar = () => {
   const navigate = useNavigate();
-  const [userState, setUserState] = useAtomState(userAtom);
+  const [user, setUser] = useRecoilState(userAtom);
   const [menuOpen, setMenuOpen] = useState(false);
 
   // Fetch user profile
@@ -23,7 +23,7 @@ const Appbar = () => {
         },
       });
       // console.log(response)
-      setUserState(response.data.email);
+      setUser(response.data.email);
     } catch (error) {
       console.error("Failed to fetch user:", error);
       handleLogout(); // Auto logout if token is invalid
@@ -38,7 +38,7 @@ const Appbar = () => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("email");
-    setUserState("");
+    setUser(null);
     axios.defaults.headers.common["Authorization"] = ""; // Secure logout
     navigate("/");
   };
@@ -69,7 +69,7 @@ const Appbar = () => {
             </Link>
           </li>
 
-          {!userState ? (
+          {!user ? (
             <>
               <li>
                 <Link
@@ -153,7 +153,7 @@ const Appbar = () => {
 
           <div className="border-t w-2/3 border-gray-200 my-3" />
 
-          {!userState ? (
+          {!user ? (
             <>
               <Link
                 to="/signin"

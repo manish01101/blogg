@@ -1,9 +1,9 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
+import { useSetRecoilState } from "recoil";
 import { userAtom } from "../store/atoms/user";
-import { useAtomState } from "@zedux/react";
 
 interface SignupInput {
   email: string;
@@ -11,7 +11,7 @@ interface SignupInput {
 }
 
 const Auth = ({ type }: { type: "signup" | "signin" }) => {
-  const [userState, setUserState] = useAtomState(userAtom);
+  const setUser = useSetRecoilState(userAtom);
   const navigate = useNavigate();
   const [postInputs, setPostInputs] = useState<SignupInput>({
     email: "",
@@ -30,8 +30,9 @@ const Auth = ({ type }: { type: "signup" | "signin" }) => {
       if (jwt) {
         localStorage.setItem("token", jwt);
         localStorage.setItem("email", email);
-        setUserState(email);
+        setUser(email);
         alert(message);
+        navigate("/");
       } else {
         alert("Unexpected response from server.");
       }
@@ -40,13 +41,6 @@ const Auth = ({ type }: { type: "signup" | "signin" }) => {
       alert(`Error while ${type}!`);
     }
   }
-
-  // Navigate after userState updates
-  useEffect(() => {
-    if (userState) {
-      navigate("/");
-    }
-  }, [userState, navigate]);
 
   return (
     <div className="px-4 h-screen flex justify-center flex-col">

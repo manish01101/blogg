@@ -1,3 +1,6 @@
-import { atom } from "@zedux/react";
+import { atom } from "recoil";
 
-export const userAtom = atom("user", "");
+export const userAtom = atom({
+  key: "userAtom",
+  default: null,
+});

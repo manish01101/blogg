@@ -13,13 +13,13 @@ const BlogPage = () => {
 
   return (
     <div className="flex flex-col">
-      <div className="max-w-4xl md:min-w-4xl mx-auto px-6 py-12 bg-white shadow-lg rounded-lg mt-10">
+      <div className="max-w-4xl md:min-w-4xl mx-auto p-6 mb-6 bg-white shadow-lg rounded-lg mt-10">
         {/* Cover Image */}
         {blog.coverImage && (
           <img
             src={blog.coverImage}
             alt={blog.title}
-            className="w-full h-96 object-cover rounded-md"
+            className="w-full h-66 object-cover rounded-md"
           />
         )}
 

@@ -2,17 +2,12 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
 import BlogPreviewCard from "../components/BlogPreviewCard";
-
-interface Blog {
-  id: string;
-  title: string;
-  content: string;
-  coverImage?: string;
-}
+import { blogState } from "../store/atoms/blogs";
+import { useRecoilState } from "recoil";
 
 const Blogs = () => {
-  const [blogs, setBlogs] = useState<Blog[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [blogs, setBlogs] = useRecoilState(blogState);
+  const [loading, setLoading] = useState(blogs.length === 0); // Only show loading if blogs are empty
   const token = localStorage.getItem("token");
 
   const fetchBlogs = async () => {
@@ -32,7 +27,7 @@ const Blogs = () => {
 
   useEffect(() => {
     fetchBlogs();
-  }, [token]);
+  }, []);
 
   if (loading) return <p>Loading...</p>;
 

@@ -35,7 +35,7 @@ const BlogPreviewCard: React.FC<BlogCardProps> = ({ blog }) => {
         <img
           src={blog.coverImage}
           alt={blog.title}
-          className="w-full h-60 object-cover"
+          className="w-full h-50 object-cover"
         />
       )}
       <div className="p-6">
