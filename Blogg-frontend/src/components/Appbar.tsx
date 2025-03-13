@@ -52,7 +52,7 @@ const Appbar = () => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("email");
-    setUser(null);
+    setUser("");
     axios.defaults.headers.common["Authorization"] = ""; // Secure logout
     navigate("/");
   };

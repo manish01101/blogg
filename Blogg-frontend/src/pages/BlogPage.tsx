@@ -13,7 +13,7 @@ const BlogPage = () => {
 
   return (
     <div className="flex flex-col">
-      <div className="max-w-4xl md:min-w-4xl mx-auto p-6 mb-6 bg-white shadow-lg rounded-lg mt-10">
+      <div className="w-full bg-gray-50 sm:max-w-xl md:max-w-3xl lg:max-w-5xl mx-auto p-6 mb-6  shadow-lg rounded-lg mt-10">
         {/* Cover Image */}
         {blog.coverImage && (
           <img
@@ -31,7 +31,15 @@ const BlogPage = () => {
         {/* Author & Date */}
         <div className="text-gray-500 pt-2 text-sm">
           <span>
-            By <strong>Unknown Author</strong> • Published Today
+            By <strong>{blog.authorName ? blog.authorName : "Unknown"}</strong>{" "}
+            •{" "}
+            {blog.createdAt
+              ? new Date(blog.createdAt)
+                  .toDateString()
+                  .split(" ")
+                  .slice(1, 3)
+                  .join(" ")
+              : "Unknown Date"}
           </span>
         </div>
 

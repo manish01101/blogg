@@ -4,14 +4,23 @@ import axios from "axios";
 import { BACKEND_URL } from "../config";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css"; // Quill styles
+import { useRecoilValue } from "recoil";
+import { userAtom } from "../store/atoms/user";
 
 const CreateBlog = () => {
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [coverImage, setCoverImage] = useState<File | null>(null);
+  const user = useRecoilValue(userAtom);
   const [loading, setLoading] = useState(false);
   const token = localStorage.getItem("token");
+
+  let authorName = user;
+  if (authorName) {
+    authorName = user.split("@")[0];
+    authorName = authorName[0].toUpperCase() + authorName.slice(1);
+  }
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -31,6 +40,7 @@ const CreateBlog = () => {
     if (coverImage) {
       formData.append("coverImage", coverImage);
     }
+    formData.append("authorName", authorName);
 
     try {
       setLoading(true);

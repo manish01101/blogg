@@ -7,6 +7,9 @@ interface Blog {
   title: string;
   content: string;
   coverImage?: string;
+  authorName?: string;
+  likes: number;
+  createdAt: Date;
 }
 
 interface BlogCardProps {
@@ -14,7 +17,7 @@ interface BlogCardProps {
 }
 
 const BlogPreviewCard: React.FC<BlogCardProps> = ({ blog }) => {
-  const MAX_LENGTH = 40;
+  const MAX_LENGTH = 80;
   const navigate = useNavigate();
 
   const truncatedContent =
@@ -26,35 +29,65 @@ const BlogPreviewCard: React.FC<BlogCardProps> = ({ blog }) => {
     navigate(`/blog/${blog.id}`, { state: { blog } }); // Pass full blog data as a state, When navigating from one page to another using useNavigate(), you can pass an object as state. This object will be available on the new page inside location.state. Only available for the current session (disappears on refresh).
   };
 
+  // Extract first letter from authorName
+  const getAuthorInitial = (name?: string) => {
+    return name ? name.charAt(0).toUpperCase() : "U";
+  };
+
   return (
     <div
       key={blog.id}
-      className="bg-white rounded-lg shadow-md overflow-hidden transform transition duration-300 hover:scale-[1.02]"
+      className="flex items-start justify-between rounded-lg shadow-md p-6 cursor-pointer transform transition duration-300 hover:scale-[1.02] hover:bg-gray-50"
+      onClick={handleReadMore}
     >
-      {blog.coverImage && (
-        <img
-          src={blog.coverImage}
-          alt={blog.title}
-          className="w-full h-50 object-cover"
-        />
-      )}
-      <div className="p-6">
+      {/* Left Section: Blog Content */}
+      <div className="flex flex-col w-full">
+        {/* Profile Section */}
+        <div className="flex items-center gap-2 mb-3">
+          <div className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-300 text-gray-700 font-bold text-lg">
+            {getAuthorInitial(blog.authorName)}
+          </div>
+          <div className="text-gray-700 font-semibold text-sm">
+            {blog.authorName}
+          </div>
+        </div>
+
+        {/* Blog Content */}
         <h2 className="text-2xl font-bold text-gray-900">{blog.title}</h2>
-        <div
-          className="prose max-w-none text-gray-700 mt-2 line-clamp-3"
+
+        <p
+          className="text-gray-600 text-sm mt-1"
           dangerouslySetInnerHTML={{
             __html: DOMPurify.sanitize(truncatedContent),
           }}
         />
-        <div className="mt-4">
-          <button
-            onClick={handleReadMore}
-            className="text-blue-600 font-medium hover:underline"
-          >
-            Read more →
-          </button>
+
+        {/* Meta Info */}
+        <div className="mt-3 flex items-center text-gray-500 text-xs">
+          <span className="flex items-center">
+            ⭐{" "}
+            <span className="ml-1">
+              {new Date(blog.createdAt)
+                .toDateString()
+                .split(" ")
+                .slice(1, 3)
+                .join(" ")}
+              {/* {new Date(blog.createdAt).toLocaleDateString()} */}
+            </span>
+          </span>
+          <span className="mx-2">•</span>
+          <span className="flex items-center">👍 {blog.likes}</span>
         </div>
       </div>
+
+      {/* Right Section: Cover Image */}
+      {blog.coverImage && (
+        <img
+          src={blog.coverImage}
+          alt={blog.title}
+          className="w-24 h-24 object-cover rounded-lg ml-4"
+        />
+      )}
     </div>
   );
 };
