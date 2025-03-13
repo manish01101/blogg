@@ -7,4 +7,5 @@
 6. Postgres as the database
 7. jwt for authentication
 8. bcryptjs for password hashing
-9. zedux for state management
+9. recoil for state management
+10. dompurify: sanitize blog content(in html form) before rendering
