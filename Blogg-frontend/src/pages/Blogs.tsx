@@ -3,7 +3,7 @@ import Appbar from "../components/Appbar";
 import Footer from "../components/Footer";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
-import BlogCard from "../components/BlogCard";
+import BlogPreviewCard from "../components/BlogPreviewCard";
 
 interface Blog {
   id: string;
@@ -14,6 +14,7 @@ interface Blog {
 
 const Blogs = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
+  const [loading, setLoading] = useState(true);
   const token = localStorage.getItem("token");
 
   const fetchBlogs = async () => {
@@ -26,12 +27,16 @@ const Blogs = () => {
       setBlogs(response.data.posts);
     } catch (error) {
       console.error("Error fetching blogs:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchBlogs();
-  }, []);
+  }, [token]);
+
+  if (loading) return <p>Loading...</p>;
 
   return (
     <div className="min-h-screen flex flex-col ">
@@ -47,7 +52,7 @@ const Blogs = () => {
 
           <div className="mt-10 grid gap-8">
             {blogs.map((blog) => (
-              <BlogCard key={blog.id} blog={blog} />
+              <BlogPreviewCard key={blog.id} blog={blog} />
             ))}
           </div>
         </div>

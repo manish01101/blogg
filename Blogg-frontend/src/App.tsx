@@ -7,6 +7,7 @@ import Blogs from "./pages/Blogs";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 import CreateBlog from "./pages/CreateBlog";
+import BlogPage from "./pages/BlogPage";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/blogs" element={<Blogs />} />
+        <Route path="/blog/:id" element={<BlogPage />} />
         <Route path="/write" element={<CreateBlog />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/signup" element={<Signup />} />
