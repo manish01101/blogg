@@ -4,6 +4,7 @@ import { BACKEND_URL } from "../config";
 import BlogPreviewCard from "../components/BlogPreviewCard";
 import { blogState } from "../store/atoms/blogs";
 import { useRecoilState } from "recoil";
+import Loading from "../components/Loading";
 
 const Blogs = () => {
   const [blogs, setBlogs] = useRecoilState(blogState);
@@ -18,8 +19,13 @@ const Blogs = () => {
         },
       });
       setBlogs(response.data.posts);
-    } catch (error) {
-      console.error("Error fetching blogs:", error);
+    } catch (error: unknown) {
+      console.error(error);
+      if (axios.isAxiosError(error)) {
+        alert(error.response?.data?.message || error.message);
+      } else {
+        alert("Something went wrong!");
+      }
     } finally {
       setLoading(false);
     }
@@ -29,7 +35,7 @@ const Blogs = () => {
     fetchBlogs();
   }, []);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <Loading />;
 
   return (
     <div className="flex flex-col ">

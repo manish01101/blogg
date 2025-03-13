@@ -5,16 +5,23 @@ import { BACKEND_URL } from "../config";
 import { FiMenu, FiX } from "react-icons/fi";
 import { useRecoilState } from "recoil";
 import { userAtom } from "../store/atoms/user";
+import Loading from "./Loading";
 
 const Appbar = () => {
   const navigate = useNavigate();
   const [user, setUser] = useRecoilState(userAtom);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
-  // Fetch user profile
+  // Fetching user profile
   const initUser = async () => {
+    setLoading(true);
     const token = localStorage.getItem("token");
-    if (!token) return;
+
+    if (!token) {
+      setLoading(false); // Ensure that loading stops if token is missing
+      return;
+    }
 
     try {
       const response = await axios.get(`${BACKEND_URL}/api/v1/user/auth/me`, {
@@ -24,9 +31,16 @@ const Appbar = () => {
       });
       // console.log(response)
       setUser(response.data.email);
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Failed to fetch user:", error);
-      handleLogout(); // Auto logout if token is invalid
+      if (axios.isAxiosError(error)) {
+        alert(error.response?.data?.message || error.message);
+      } else {
+        alert("Something went wrong!");
+      }
+      handleLogout(); // auto logout if token is invalid
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -42,6 +56,8 @@ const Appbar = () => {
     axios.defaults.headers.common["Authorization"] = ""; // Secure logout
     navigate("/");
   };
+
+  if (loading) return <Loading />;
 
   return (
     <nav className="drop-shadow-sm shadow-md py-4">

@@ -4,6 +4,7 @@ import axios from "axios";
 import { BACKEND_URL } from "../config";
 import { useSetRecoilState } from "recoil";
 import { userAtom } from "../store/atoms/user";
+import Loading from "./Loading";
 
 interface SignupInput {
   email: string;
@@ -13,12 +14,14 @@ interface SignupInput {
 const Auth = ({ type }: { type: "signup" | "signin" }) => {
   const setUser = useSetRecoilState(userAtom);
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const [postInputs, setPostInputs] = useState<SignupInput>({
     email: "",
     password: "",
   });
 
   async function sendRequest() {
+    setLoading(true);
     try {
       const response = await axios.post(
         `${BACKEND_URL}/api/v1/user/${type === "signup" ? "signup" : "signin"}`,
@@ -36,11 +39,19 @@ const Auth = ({ type }: { type: "signup" | "signin" }) => {
       } else {
         alert("Unexpected response from server.");
       }
-    } catch (error) {
+    } catch (error: unknown) {
       console.error(error);
-      alert(`Error while ${type}!`);
+      if (axios.isAxiosError(error)) {
+        alert(error.response?.data?.message || error.message);
+      } else {
+        alert("Something went wrong!");
+      }
+    } finally {
+      setLoading(false);
     }
   }
+
+  if (loading) return <Loading />;
 
   return (
     <div className="px-4 h-screen flex justify-center flex-col">
