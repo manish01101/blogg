@@ -63,7 +63,7 @@ blogRouter.post("/", async (c) => {
         authorId: c.get("userId"),
         published: true,
         coverImage: coverImageUrl,
-        authorName
+        authorName,
       },
     });
 
@@ -71,6 +71,35 @@ blogRouter.post("/", async (c) => {
   } catch (error) {
     console.error("Error creating blog:", error);
     return c.json({ message: "Internal Server Error" }, 500);
+  }
+});
+
+// update like
+blogRouter.put("/like/:id", async (c) => {
+  const prisma = new PrismaClient({
+    datasourceUrl: c.env.DATABASE_URL,
+  }).$extends(withAccelerate());
+
+  try {
+    const postId = c.req.param("id");
+    const { increment } = await c.req.json(); // Expecting { increment: true/false }
+
+    if (typeof increment !== "boolean") {
+      return c.json({ message: "Invalid request format" }, 400);
+    }
+
+    // Increment or decrement likes count
+    const updatedPost = await prisma.post.update({
+      where: { id: postId },
+      data: {
+        likes: { increment: increment ? 1 : -1 },
+      },
+    });
+
+    return c.json({ message: "Like updated successfully" });
+  } catch (error) {
+    console.error(error);
+    return c.json({ message: "Internal server error" }, 500);
   }
 });
 
@@ -147,7 +176,7 @@ blogRouter.get("/user/bulk", async (c) => {
         coverImage: true,
         authorName: true,
         likes: true,
-        createdAt: true
+        createdAt: true,
       },
     });
     return c.json({ posts });

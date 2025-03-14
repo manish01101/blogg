@@ -5,11 +5,7 @@ import { BACKEND_URL } from "../config";
 import { useSetRecoilState } from "recoil";
 import { userAtom } from "../store/atoms/user";
 import Loading from "./Loading";
-
-interface SignupInput {
-  email: string;
-  password: string;
-}
+import { SignupInput } from "../types";
 
 const Auth = ({ type }: { type: "signup" | "signin" }) => {
   const setUser = useSetRecoilState(userAtom);

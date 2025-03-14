@@ -1,20 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import DOMPurify from "dompurify";
-
-interface Blog {
-  id: string;
-  title: string;
-  content: string;
-  coverImage?: string;
-  authorName?: string;
-  likes: number;
-  createdAt: Date;
-}
-
-interface BlogCardProps {
-  blog: Blog;
-}
+import { BlogCardProps } from "../types";
 
 const BlogPreviewCard: React.FC<BlogCardProps> = ({ blog }) => {
   const MAX_LENGTH = 80;

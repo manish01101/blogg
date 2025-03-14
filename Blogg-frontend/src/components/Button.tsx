@@ -1,7 +1,5 @@
-interface btnType {
-  onclick: () => void;
-  content: string;
-}
+import { btnType } from "../types";
+
 const Button = ({ onclick, content }: btnType) => {
   return (
     <button

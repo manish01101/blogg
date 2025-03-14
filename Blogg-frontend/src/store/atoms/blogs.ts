@@ -1,11 +1,5 @@
 import { atom } from "recoil";
-
-interface Blog {
-  id: string;
-  title: string;
-  content: string;
-  coverImage?: string;
-}
+import { Blog } from "../../types";
 
 export const blogState = atom<Blog[]>({
   key: "blogState",

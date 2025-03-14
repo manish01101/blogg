@@ -118,7 +118,7 @@ const CreateBlog = () => {
       {/* Submit Button */}
       <button
         onClick={handleSubmit}
-        className="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold hover:bg-blue-700 transition duration-300 disabled:bg-blue-400"
+        className="w-full bg-gray-600 text-white p-3 rounded-lg font-semibold hover:bg-gray-800 transition duration-300 disabled:bg-gray-400"
         disabled={loading}
       >
         {loading ? "Publishing..." : "Publish Blog"}
