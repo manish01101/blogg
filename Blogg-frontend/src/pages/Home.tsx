@@ -3,7 +3,6 @@ import { Blog } from "../types";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
 import BlogPreviewCard from "../components/BlogPreviewCard";
-import { useNavigate } from "react-router-dom";
 import { useRecoilState } from "recoil";
 import { homeBlogState } from "../store/atoms/blogs";
 
@@ -15,7 +14,8 @@ const Home = () => {
 
   const observer = useRef<IntersectionObserver | null>(null);
   const lastBlogRef = useRef<HTMLDivElement | null>(null);
-  const navigate = useNavigate();
+
+  const token = localStorage.getItem("token");
 
   // Fetch blogs with cursor-based pagination
   const fetchBlogs = async () => {
@@ -23,11 +23,9 @@ const Home = () => {
     setLoading(true);
 
     try {
-      const token = localStorage.getItem("token");
       if (!token) {
         setError("You are logged out, Please sign in!");
         setLoading(false);
-        setTimeout(() => navigate("/signin"), 1000);
         return;
       }
 
@@ -79,39 +77,56 @@ const Home = () => {
     return () => observer.current?.disconnect();
   }, [homeBlogs, cursor]);
 
-  if (error) return <p className="text-red-500 text-center">{error}</p>;
-
   return (
     <main className="flex-grow">
-      {/* Hero Section */}
-      <header className="text-center py-20">
-        <h2 className="text-4xl font-black">Welcome to Blogg</h2>
-        <p className="text-lg mt-2">
-          Discover amazing articles on various topics written by passionate
-          bloggers.
-        </p>
-        <h3 className="text-3xl font-semibold text-gray-800 mb-6">
-          Latest Posts
-        </h3>
-      </header>
+      {!token || error ? (
+        <div className="flex flex-col items-start justify-start p-20">
+          <header className="">
+            <h2 className="text-6xl md:text-7xl lg:text-8xl max-w-3/5">
+              Where Words Find Their Home.
+            </h2>
 
-      {/* Blog Previews */}
-      {homeBlogs.length === 0 ? (
-        <p className="text-center text-gray-500 mt-6">No blogs available.</p>
-      ) : (
-        <section className="container max-w-4xl mx-auto px-6 py-12">
-          <div className="grid gap-6">
-            {homeBlogs.map((blog, index) => (
-              <div
-                key={blog.id}
-                ref={index === homeBlogs.length - 1 ? lastBlogRef : null}
-              >
-                <BlogPreviewCard blog={blog} />
-              </div>
-            ))}
+            <p className="pt-4 text-xl text-gray-700">
+              A place to read, write, and deepen your understanding
+            </p>
+          </header>
+
+          {/* Align button to the left */}
+          <div className="flex justify-start pt-10">
+            <button
+              onClick={() => {}}
+              className="px-10 py-3 text-white text-lg bg-green-700 lg:bg-gray-700 rounded-full cursor-pointer transform transition duration-300 hover:scale-[1.05] hover:shadow-2xl"
+            >
+              Start reading
+            </button>
           </div>
-          {loading && <p className="text-center">Loading more...</p>}
-        </section>
+        </div>
+      ) : (
+        <div>
+          <h3 className="text-3xl font-semibold text-gray-800 m-6">
+            Latest Posts...
+          </h3>
+          {/* Blog Previews */}
+          {homeBlogs.length === 0 ? (
+            <p className="text-center text-gray-500 mt-6">
+              No blogs available.
+            </p>
+          ) : (
+            <section className="container max-w-4xl mx-auto px-6 py-12">
+              <div className="grid gap-6">
+                {homeBlogs.map((blog, index) => (
+                  <div
+                    key={blog.id}
+                    ref={index === homeBlogs.length - 1 ? lastBlogRef : null}
+                  >
+                    <BlogPreviewCard blog={blog} />
+                  </div>
+                ))}
+              </div>
+              {loading && <p className="text-center">Loading more...</p>}
+            </section>
+          )}
+        </div>
       )}
     </main>
   );
