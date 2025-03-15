@@ -3,13 +3,16 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
 import { FiMenu, FiX } from "react-icons/fi";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import { userAtom } from "../store/atoms/user";
 import Loading from "./Loading";
+import { blogState, homeBlogState } from "../store/atoms/blogs";
 
 const Appbar = () => {
   const navigate = useNavigate();
   const [user, setUser] = useRecoilState(userAtom);
+  const setBlogState = useSetRecoilState(blogState);
+  const setHomeBlogState = useSetRecoilState(homeBlogState);
   const [menuOpen, setMenuOpen] = useState(false);
   const [loading, setLoading] = useState(false);
 
@@ -52,7 +55,9 @@ const Appbar = () => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("email");
-    setUser("");
+    setUser(""); // reset all things
+    setBlogState([]);
+    setHomeBlogState([]);
     axios.defaults.headers.common["Authorization"] = ""; // Secure logout
     navigate("/");
   };
@@ -110,7 +115,7 @@ const Appbar = () => {
                   to={"/blogs"}
                   className="text-gray-600 hover:text-green-500"
                 >
-                  Blogs
+                  Your Blogs
                 </Link>
               </li>
               <li>
@@ -144,74 +149,80 @@ const Appbar = () => {
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <div className="md:hidden bg-white shadow-lg rounded-lg absolute top-16 right-5 w-2/4 sm:w-1/2 md:w-1/3 flex flex-col items-center space-y-4 py-6 px-4 transition-transform transform scale-100">
-          <Link
-            to="/"
-            className="text-gray-700 hover:text-green-500 font-medium text-lg"
-            onClick={() => setMenuOpen(false)}
-          >
-            Home
-          </Link>
-          <Link
-            to="/about"
-            className="text-gray-700 hover:text-green-500 font-medium text-lg"
-            onClick={() => setMenuOpen(false)}
-          >
-            About
-          </Link>
-          <Link
-            to="/contact"
-            className="text-gray-700 hover:text-green-500 font-medium text-lg"
-            onClick={() => setMenuOpen(false)}
-          >
-            Contact
-          </Link>
+        <>
+          <div
+            className="fixed inset-0 bg-opacity-50 z-30"
+            onClick={() => setMenuOpen(false)} // Close menu when clicking outside
+          ></div>
+          <div className="md:hidden fixed top-16 right-5 w-2/4 sm:w-1/2 md:w-1/3 bg-gray-50 shadow-lg rounded-lg z-40 flex flex-col items-center space-y-4 py-6 px-4">
+            <Link
+              to="/"
+              className="text-gray-700 hover:text-green-500 font-medium text-lg"
+              onClick={() => setMenuOpen(false)}
+            >
+              Home
+            </Link>
+            <Link
+              to="/about"
+              className="text-gray-700 hover:text-green-500 font-medium text-lg"
+              onClick={() => setMenuOpen(false)}
+            >
+              About
+            </Link>
+            <Link
+              to="/contact"
+              className="text-gray-700 hover:text-green-500 font-medium text-lg"
+              onClick={() => setMenuOpen(false)}
+            >
+              Contact
+            </Link>
 
-          <div className="border-t w-2/3 border-gray-200 my-3" />
+            <div className="border-t w-2/3 border-gray-200 my-3" />
 
-          {!user ? (
-            <>
-              <Link
-                to="/signin"
-                className="text-gray-700 hover:text-green-500 font-medium text-lg"
-                onClick={() => setMenuOpen(false)}
-              >
-                Sign in
-              </Link>
-              <Link to="/signup" onClick={() => setMenuOpen(false)}>
-                <button className="w-full px-6 py-2 text-white bg-gray-800 hover:bg-gray-900 rounded-full text-lg font-semibold">
-                  Get started
+            {!user ? (
+              <>
+                <Link
+                  to="/signin"
+                  className="text-gray-700 hover:text-green-500 font-medium text-lg"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Sign in
+                </Link>
+                <Link to="/signup" onClick={() => setMenuOpen(false)}>
+                  <button className="w-full px-6 py-2 text-white bg-gray-800 hover:bg-gray-900 rounded-full text-lg font-semibold">
+                    Get started
+                  </button>
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/blogs"
+                  className="text-gray-700 hover:text-green-500 font-medium text-lg"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Your Blogs
+                </Link>
+                <Link
+                  to="/write"
+                  className="text-gray-700 hover:text-green-500 font-medium text-lg"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Write
+                </Link>
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setMenuOpen(false);
+                  }}
+                  className="w-full px-6 py-2 text-white bg-red-600 hover:bg-red-700 rounded-full text-lg font-semibold"
+                >
+                  Log out
                 </button>
-              </Link>
-            </>
-          ) : (
-            <>
-              <Link
-                to="/blogs"
-                className="text-gray-700 hover:text-green-500 font-medium text-lg"
-                onClick={() => setMenuOpen(false)}
-              >
-                Blogs
-              </Link>
-              <Link
-                to="/write"
-                className="text-gray-700 hover:text-green-500 font-medium text-lg"
-                onClick={() => setMenuOpen(false)}
-              >
-                Write
-              </Link>
-              <button
-                onClick={() => {
-                  handleLogout();
-                  setMenuOpen(false);
-                }}
-                className="w-full px-6 py-2 text-white bg-red-600 hover:bg-red-700 rounded-full text-lg font-semibold"
-              >
-                Log out
-              </button>
-            </>
-          )}
-        </div>
+              </>
+            )}
+          </div>
+        </>
       )}
     </nav>
   );
