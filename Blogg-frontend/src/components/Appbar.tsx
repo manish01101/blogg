@@ -7,6 +7,7 @@ import { useRecoilState, useSetRecoilState } from "recoil";
 import { userAtom } from "../store/atoms/user";
 import Loading from "./Loading";
 import { blogState, homeBlogState } from "../store/atoms/blogs";
+import { TfiWrite } from "react-icons/tfi";
 
 const Appbar = () => {
   const navigate = useNavigate();
@@ -121,9 +122,10 @@ const Appbar = () => {
               <li>
                 <Link
                   to={"/write"}
-                  className="text-gray-600 hover:text-green-500"
+                  className="text-gray-600 hover:text-green-500 flex items-center justify-center gap-1"
                 >
-                  Write
+                  <TfiWrite />
+                  <span>Write</span>
                 </Link>
               </li>
               <li>
@@ -149,12 +151,12 @@ const Appbar = () => {
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <>
+        <div>
           <div
             className="fixed inset-0 bg-opacity-50 z-30"
             onClick={() => setMenuOpen(false)} // Close menu when clicking outside
           ></div>
-          <div className="md:hidden fixed top-16 right-5 w-2/4 sm:w-1/2 md:w-1/3 bg-gray-50 shadow-lg rounded-lg z-40 flex flex-col items-center space-y-4 py-6 px-4">
+          <div className="md:hidden fixed top-16 right-5 w-2/4 sm:w-1/2 md:w-1/3 bg-gray-50 shadow-lg rounded-lg flex flex-col items-center space-y-4 py-6 px-4 z-[9999]">
             <Link
               to="/"
               className="text-gray-700 hover:text-green-500 font-medium text-lg"
@@ -222,7 +224,7 @@ const Appbar = () => {
               </>
             )}
           </div>
-        </>
+        </div>
       )}
     </nav>
   );

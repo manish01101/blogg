@@ -24,7 +24,7 @@ const BlogPreviewCard: React.FC<BlogCardProps> = ({ blog }) => {
   return (
     <div
       key={blog.id}
-      className="flex items-start justify-between rounded-lg shadow-md p-6 cursor-pointer transform transition duration-300 hover:scale-[1.02] hover:bg-gray-50"
+      className="flex items-start justify-between rounded-lg shadow-md p-6 cursor-pointer transition duration-300 hover:scale-[1.02] hover:bg-gray-50"
       onClick={handleReadMore}
     >
       {/* Left Section: Blog Content */}
