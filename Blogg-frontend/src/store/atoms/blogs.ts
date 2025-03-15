@@ -3,5 +3,10 @@ import { Blog } from "../../types";
 
 export const blogState = atom<Blog[]>({
   key: "blogState",
-  default: [], // Default empty array
+  default: [],
+});
+
+export const homeBlogState = atom<Blog[]>({
+  key: "homeBlogState",
+  default: [],
 });

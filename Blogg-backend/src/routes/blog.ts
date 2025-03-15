@@ -148,8 +148,20 @@ blogRouter.get("/bulk", async (c) => {
       datasourceUrl: c.env.DATABASE_URL,
     }).$extends(withAccelerate());
 
-    const posts = await prisma.post.findMany();
-    return c.json({ posts });
+    const cursor = c.req.query("cursor"); // Get cursor from request
+    const limit = 5; // Number of blogs per request
+
+    const posts = await prisma.post.findMany({
+      take: limit,
+      skip: cursor ? 1 : 0, // Skip 1 item if cursor exists
+      cursor: cursor ? { id: cursor } : undefined, // Start from the last seen post
+      orderBy: { createdAt: "desc" },
+    });
+
+    const nextCursor =
+      posts.length === limit ? posts[posts.length - 1].id : null;
+
+    return c.json({ posts, nextCursor });
   } catch (error) {
     console.error(error);
     return c.json({ message: "Internal server error" }, 500);
