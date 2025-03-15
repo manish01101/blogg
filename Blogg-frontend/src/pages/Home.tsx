@@ -5,6 +5,7 @@ import { BACKEND_URL } from "../config";
 import BlogPreviewCard from "../components/BlogPreviewCard";
 import { useRecoilState } from "recoil";
 import { homeBlogState } from "../store/atoms/blogs";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const [homeBlogs, setHomeBlogs] = useRecoilState(homeBlogState);
@@ -14,6 +15,7 @@ const Home = () => {
 
   const observer = useRef<IntersectionObserver | null>(null);
   const lastBlogRef = useRef<HTMLDivElement | null>(null);
+  const navigate = useNavigate();
 
   const token = localStorage.getItem("token");
 
@@ -94,7 +96,7 @@ const Home = () => {
           {/* Align button to the left */}
           <div className="flex justify-start pt-10">
             <button
-              onClick={() => {}}
+              onClick={() => navigate("/signin")}
               className="px-10 py-3 text-white text-lg bg-green-700 lg:bg-gray-700 rounded-full cursor-pointer transform transition duration-300 hover:scale-[1.05] hover:shadow-2xl"
             >
               Start reading
