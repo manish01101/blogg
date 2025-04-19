@@ -26,11 +26,19 @@ const Contact = () => {
 
       setSuccess(data.success || "Message sent successfully!");
       setForm({ name: "", email: "", message: "" });
-    } catch (error) {
+    } catch (error: unknown) {
       console.error("Error sending message:", error);
-      setSuccess(
-        error.response?.data?.error || "Something went wrong. Please try again."
-      );
+      if (axios.isAxiosError(error)) {
+        setSuccess(
+          error.response?.data?.error ||
+            error.message ||
+            "Something went wrong. Please try again."
+        );
+      } else if (error instanceof Error) {
+        setSuccess(error.message || "An unexpected error occurred.");
+      } else {
+        setSuccess("An unknown error occurred.");
+      }
     } finally {
       setLoading(false);
     }
@@ -79,7 +87,13 @@ const Contact = () => {
         </form>
 
         {success && (
-          <p className={`mt-4 text-center ${success.includes("successfully") ? "text-green-600" : "text-red-600"}`}>
+          <p
+            className={`mt-4 text-center ${
+              success.includes("successfully")
+                ? "text-green-600"
+                : "text-red-600"
+            }`}
+          >
             {success}
           </p>
         )}
