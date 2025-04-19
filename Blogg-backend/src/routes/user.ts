@@ -1,8 +1,7 @@
-import { PrismaClient } from "@prisma/client/edge";
-import { withAccelerate } from "@prisma/extension-accelerate";
 import { Hono } from "hono";
 import { sign, verify } from "hono/jwt";
 import bcrypt from "bcryptjs"; // Secure password hashing
+import { getPrisma } from "../utils/prisma";
 
 export const userRouter = new Hono<{
   Bindings: {
@@ -45,9 +44,7 @@ userRouter.get("/auth/me", async (c) => {
   const userId = c.get("userId");
 
   try {
-    const prisma = new PrismaClient({
-      datasourceUrl: c.env.DATABASE_URL,
-    }).$extends(withAccelerate());
+    const prisma = getPrisma(c.env.DATABASE_URL);
 
     const user = await prisma.user.findUnique({
       where: { id: userId },
@@ -72,9 +69,7 @@ userRouter.post("/signup", async (c) => {
     if (!email || !password) {
       return c.json({ message: "Email and password are required!" }, 400);
     }
-    const prisma = new PrismaClient({
-      datasourceUrl: c.env.DATABASE_URL,
-    }).$extends(withAccelerate());
+    const prisma = getPrisma(c.env.DATABASE_URL);
 
     // Check if user already exists
     const existingUser = await prisma.user.findUnique({ where: { email } });
@@ -110,9 +105,7 @@ userRouter.post("/signin", async (c) => {
     if (!email || !password) {
       return c.json({ message: "Email and password are required!" }, 400);
     }
-    const prisma = new PrismaClient({
-      datasourceUrl: c.env.DATABASE_URL,
-    }).$extends(withAccelerate());
+    const prisma = getPrisma(c.env.DATABASE_URL);
 
     // Find user
     const user = await prisma.user.findUnique({ where: { email } });
