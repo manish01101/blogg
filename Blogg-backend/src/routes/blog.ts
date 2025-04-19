@@ -53,7 +53,7 @@ blogRouter.post("/", async (c) => {
 
     // default img url
     let coverImageUrl: string | null =
-      "https://png.pngtree.com/png-vector/20231114/ourmid/pngtree-red-blog-logo-title-graphic-png-image_10558747.png";
+      "https://static.vecteezy.com/system/resources/previews/000/578/699/non_2x/vector-feather-pen-write-sign-logo-template-app-icons.jpg";
 
     // Save post to database
     const post = await prisma.post.create({
