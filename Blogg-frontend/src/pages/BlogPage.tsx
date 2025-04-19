@@ -108,11 +108,13 @@ const BlogPage = () => {
     <div className="flex flex-col">
       <div className="w-full bg-gray-50 sm:max-w-xl md:max-w-3xl lg:max-w-5xl mx-auto p-6 mb-6 shadow-lg rounded-lg mt-10">
         {fetchedBlog.coverImage && (
-          <img
-            src={fetchedBlog.coverImage}
-            alt={fetchedBlog.title}
-            className="w-full h-66 object-cover rounded-md"
-          />
+          <div className="flex justify-center item-center">
+            <img
+              src={fetchedBlog.coverImage}
+              alt={fetchedBlog.title}
+              className="h-50 object-cover rounded-md"
+            />
+          </div>
         )}
         <h1 className="text-5xl font-extrabold text-gray-900 mt-6 leading-snug">
           {fetchedBlog.title}

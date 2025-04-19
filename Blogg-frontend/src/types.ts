@@ -18,6 +18,8 @@ export interface SignupInput {
 }
 
 export interface btnType {
-  onclick: () => void;
+  onclick?: () => void;
   content: string;
+  disabled?: boolean;
+  type?: "button" | "submit" | "reset";
 }

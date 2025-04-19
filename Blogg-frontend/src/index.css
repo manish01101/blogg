@@ -1,5 +1,5 @@
 @import "tailwindcss";
 
 body {
-  @apply bg-[#F7F4ED]; /* Change to your desired color */
+  @apply bg-[#fff]; /* Change to your desired color */
 }
