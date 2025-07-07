@@ -131,3 +131,66 @@ userRouter.post("/signin", async (c) => {
     return c.json({ message: "Internal server error" }, 500);
   }
 });
+
+// update profile
+userRouter.put("/auth/profile", async (c) => {
+  const userId = c.get("userId");
+  const { name, email, profileImage } = await c.req.json();
+
+  if (!name && !email && !profileImage) {
+    return c.json({ message: "Nothing to update." }, 400);
+  }
+
+  const prisma = getPrisma(c.env.DATABASE_URL);
+
+  // Check for email uniqueness if updating email
+  if (email) {
+    const existing = await prisma.user.findUnique({ where: { email } });
+    if (existing && existing.id !== userId) {
+      return c.json({ message: "Email already in use." }, 409);
+    }
+  }
+
+  const updated = await prisma.user.update({
+    where: { id: userId },
+    data: {
+      name: name || undefined,
+      email: email || undefined,
+      profileImage: profileImage || undefined,
+    },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      profileImage: true,
+    }
+  });
+
+  return c.json({ message: "Profile updated", user: updated });
+});
+
+// change password
+userRouter.put("/auth/password", async (c) => {
+  const userId = c.get("userId");
+  const { oldPassword, newPassword } = await c.req.json();
+
+  if (!oldPassword || !newPassword) {
+    return c.json({ message: "Old and new password required." }, 400);
+  }
+
+  const prisma = getPrisma(c.env.DATABASE_URL);
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+
+  if (!user || !(await bcrypt.compare(oldPassword, user.password))) {
+    return c.json({ message: "Incorrect current password." }, 403);
+  }
+
+  const hashed = await bcrypt.hash(newPassword, 10);
+
+  await prisma.user.update({
+    where: { id: userId },
+    data: { password: hashed }
+  });
+
+  return c.json({ message: "Password updated." });
+});
