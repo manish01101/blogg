@@ -1,6 +1,6 @@
 const Quote = () => {
   return (
-    <div className="bg-slate-200 h-screen flex justify-center items-center">
+    <div className="bg-slate-200 h-full flex justify-center items-center">
       <div className="flex justify-center">
         <div className="max-w-lg text-center">
           <div className="text-3xl font-bold">

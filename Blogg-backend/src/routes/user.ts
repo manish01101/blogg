@@ -89,7 +89,12 @@ userRouter.post("/signup", async (c) => {
     const token = await sign({ id: user.id }, c.env.JWT_SECRET);
 
     return c.json(
-      { jwt: token, message: "User created successfully!", email },
+      {
+        jwt: token,
+        message: "User created successfully!",
+        email,
+        userId: user.id,
+      },
       201
     );
   } catch (error) {
@@ -123,7 +128,12 @@ userRouter.post("/signin", async (c) => {
     const token = await sign({ id: user.id }, c.env.JWT_SECRET);
 
     return c.json(
-      { jwt: token, message: "User signed in successfully!", email },
+      {
+        jwt: token,
+        message: "User signed in successfully!",
+        email,
+        userId: user.id,
+      },
       200
     );
   } catch (error) {
@@ -163,10 +173,10 @@ userRouter.put("/auth/profile", async (c) => {
       name: true,
       email: true,
       profileImage: true,
-    }
+    },
   });
 
-  return c.json({ message: "Profile updated", user: updated });
+  return c.json({ message: "Profile updated", userId: updated.id });
 });
 
 // change password
@@ -189,7 +199,7 @@ userRouter.put("/auth/password", async (c) => {
 
   await prisma.user.update({
     where: { id: userId },
-    data: { password: hashed }
+    data: { password: hashed },
   });
 
   return c.json({ message: "Password updated." });

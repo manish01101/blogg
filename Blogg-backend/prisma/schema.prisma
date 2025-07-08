@@ -14,11 +14,12 @@ datasource db {
 }
 
 model User {
-  id       String  @id @default(uuid())
-  email    String  @unique
-  name     String?
-  password String
-  posts    Post[]
+  id           String  @id @default(uuid())
+  email        String  @unique
+  name         String?
+  password     String
+  profileImage String?
+  posts        Post[]
 }
 
 model Post {
@@ -32,4 +33,5 @@ model Post {
   authorName String?
   likes      Int      @default(0)
   createdAt  DateTime @default(now())
+  isDeleted  Boolean  @default(false)
 }

@@ -24,12 +24,15 @@ const Auth = ({ type }: { type: "signup" | "signin" }) => {
         postInputs
       );
       // console.log("hi res", response);
-      const { email, jwt, message } = response.data;
+      const { email, userId, jwt, message } = response.data;
 
       if (jwt) {
         localStorage.setItem("token", jwt);
         localStorage.setItem("email", email);
-        setUser(email);
+        setUser({
+          userEmail: email,
+          userId: userId,
+        });
         alert(message);
         navigate("/");
       } else {
@@ -50,7 +53,7 @@ const Auth = ({ type }: { type: "signup" | "signin" }) => {
   if (loading) return <Loading />;
 
   return (
-    <div className="px-4 h-screen flex justify-center flex-col">
+    <div className="px-4 h-full flex justify-center flex-col">
       <div className="flex justify-center">
         <div>
           <div className="px-10">

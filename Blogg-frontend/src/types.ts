@@ -4,12 +4,15 @@ export interface Blog {
   content: string;
   coverImage?: string;
   authorName?: string;
+  authorId?: string;
   likes: number;
   createdAt: Date;
 }
 
 export interface BlogCardProps {
   blog: Blog;
+  currentUserId?: string;
+  onDelete?: (id: string) => void;
 }
 
 export interface SignupInput {

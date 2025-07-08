@@ -3,13 +3,16 @@ import axios from "axios";
 import { BACKEND_URL } from "../config";
 import BlogPreviewCard from "../components/BlogPreviewCard";
 import { blogState } from "../store/atoms/blogs";
-import { useRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import Loading from "../components/Loading";
+import { userAtom } from "../store/atoms/user";
 
 const Blogs = () => {
   const [blogs, setBlogs] = useRecoilState(blogState);
   const [loading, setLoading] = useState(blogs.length === 0); // Show loading only if blogs are empty
   const [error, setError] = useState<string | null>(null);
+  const currentUser = useRecoilValue(userAtom);
+  const currentUserId = currentUser.userId;
 
   useEffect(() => {
     const fetchBlogs = async () => {
@@ -51,6 +54,10 @@ const Blogs = () => {
     }
   }, [blogs, setBlogs]); // Dependencies to prevent redundant requests
 
+  const handleDelete = (id: string) => {
+    setBlogs((prev) => prev.filter((blog) => blog.id !== id));
+  };
+
   if (loading) return <Loading />;
   if (error) return <p className="text-red-500 text-center">{error}</p>;
 
@@ -72,7 +79,12 @@ const Blogs = () => {
           ) : (
             <div className="mt-10 grid gap-8">
               {blogs.map((blog) => (
-                <BlogPreviewCard key={blog.id} blog={blog} />
+                <BlogPreviewCard
+                  key={blog.id}
+                  blog={blog}
+                  currentUserId={currentUserId}
+                  onDelete={handleDelete}
+                />
               ))}
             </div>
           )}

@@ -106,10 +106,14 @@ const Home = () => {
       ) : (
         <div>
           <h3 className="text-3xl font-semibold text-gray-800 m-6">
-            Latest Posts...
+            Latest Posts
           </h3>
           {/* Blog Previews */}
-          {homeBlogs.length === 0 ? (
+          {loading ? (
+            <p className="text-center text-gray-500 mt-6">
+              Please wait a while...
+            </p>
+          ) : homeBlogs.length === 0 ? (
             <p className="text-center text-gray-500 mt-6">
               No blogs available.
             </p>

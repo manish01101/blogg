@@ -1,11 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DOMPurify from "dompurify";
 import { BlogCardProps } from "../types";
+import axios from "axios";
+import { BACKEND_URL } from "../config";
 
-const BlogPreviewCard: React.FC<BlogCardProps> = ({ blog }) => {
+const BlogPreviewCard: React.FC<BlogCardProps> = ({
+  blog,
+  currentUserId,
+  onDelete,
+}) => {
   const MAX_LENGTH = 80;
   const navigate = useNavigate();
+  const [deleting, setDeleting] = useState(false);
 
   const truncatedContent =
     blog.content.length > MAX_LENGTH
@@ -14,6 +21,25 @@ const BlogPreviewCard: React.FC<BlogCardProps> = ({ blog }) => {
 
   const handleReadMore = () => {
     navigate(`/blog/${blog.id}`, { state: { blog } }); // Pass full blog data as a state, When navigating from one page to another using useNavigate(), you can pass an object as state. This object will be available on the new page inside location.state. Only available for the current session (disappears on refresh).
+  };
+
+  const handleDelete = async (e: React.MouseEvent) => {
+    setDeleting(true);
+    e.stopPropagation(); // Prevent triggering handleReadMore
+    if (!window.confirm("Are you sure you want to delete this blog?")) return;
+    try {
+      const token = localStorage.getItem("token");
+      await axios.delete(`${BACKEND_URL}/api/v1/blog/${blog.id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setDeleting(false);
+      if (onDelete) {
+        onDelete(blog.id);
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Failed to delete blog. Please try again.");
+    }
   };
 
   // Extract first letter from authorName
@@ -64,6 +90,17 @@ const BlogPreviewCard: React.FC<BlogCardProps> = ({ blog }) => {
           </span>
           <span className="mx-2">•</span>
           <span className="flex items-center">👍 {blog.likes}</span>
+          <span className="flex items-center">
+            {/* Show Delete button if user is the creator */}
+            {currentUserId === blog.authorId && (
+              <button
+                className="ml-4 px-4 py-1 bg-red-500 text-white rounded hover:bg-red-600 w-max transition-colors duration-200"
+                onClick={handleDelete}
+              >
+                {deleting ? "Deleting..." : "Delete"}
+              </button>
+            )}
+          </span>
         </div>
       </div>
 

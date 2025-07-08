@@ -1,11 +1,16 @@
 import { Hono } from "hono";
 import { verify } from "hono/jwt";
 import { getPrisma } from "../utils/prisma";
+import { uploadImageToCloudinaryREST } from "../utils/cloudinary";
 
 export const blogRouter = new Hono<{
   Bindings: {
     DATABASE_URL: string;
     JWT_SECRET: string;
+    CLOUDINARY_CLOUD_NAME: string;
+    CLOUDINARY_API_KEY: string;
+    CLOUDINARY_API_SECRET: string;
+    CLOUDINARY_UPLOAD_PRESET: String;
   };
   Variables: {
     userId: string;
@@ -42,6 +47,7 @@ blogRouter.post("/", async (c) => {
     const content = formData.get("content") as string;
     const coverImage = formData.get("coverImage") as File | null;
     const authorName = formData.get("authorName") as string;
+    console.log(authorName)
 
     if (!title || !content) {
       return c.json({ message: "Title and content are required!" }, 400);
@@ -50,6 +56,28 @@ blogRouter.post("/", async (c) => {
     // default img url
     let coverImageUrl: string | null =
       "https://static.vecteezy.com/system/resources/previews/000/578/699/non_2x/vector-feather-pen-write-sign-logo-template-app-icons.jpg";
+
+    // If a file was uploaded, upload to Cloudinary
+    if (coverImage) {
+      if (!coverImage.type.startsWith("image/")) {
+        return c.json(
+          { message: "Invalid file type. Only images allowed." },
+          400
+        );
+      }
+      if (coverImage.size > 5 * 1024 * 1024) {
+        return c.json({ message: "Image too large. Max 5MB." }, 400);
+      }
+      // Use the REST upload function
+      const uploadResult = await uploadImageToCloudinaryREST({
+        file: coverImage,
+        filename: Date.now().toString(),
+        cloudName: c.env.CLOUDINARY_CLOUD_NAME,
+        apiKey: c.env.CLOUDINARY_API_KEY,
+        uploadPreset: c.env.CLOUDINARY_UPLOAD_PRESET.toString(),
+      });
+      coverImageUrl = uploadResult.secure_url;
+    }
 
     // Save post to database
     const post = await prisma.post.create({
@@ -110,7 +138,7 @@ blogRouter.put("/:id", async (c) => {
       return c.json({ message: "Title and content are required" }, 400);
     }
 
-    const existingPost = await prisma.post.findUnique({
+    const existingPost = await prisma.post.findFirst({
       where: { id: postId },
     });
     if (!existingPost) {
@@ -139,9 +167,12 @@ blogRouter.get("/bulk", async (c) => {
     const prisma = getPrisma(c.env.DATABASE_URL);
 
     const cursor = c.req.query("cursor"); // Get cursor from request
-    const limit = 5; // Number of blogs per request
+    const limit = 10; // Number of blogs per request
 
     const posts = await prisma.post.findMany({
+      where: {
+        isDeleted: false,
+      },
       take: limit,
       skip: cursor ? 1 : 0, // Skip 1 item if cursor exists
       cursor: cursor ? { id: cursor } : undefined, // Start from the last seen post
@@ -158,7 +189,7 @@ blogRouter.get("/bulk", async (c) => {
   }
 });
 
-// get user specific blogs
+// get user's specific blogs
 blogRouter.get("/user/bulk", async (c) => {
   const authorId = c.get("userId");
 
@@ -168,6 +199,7 @@ blogRouter.get("/user/bulk", async (c) => {
     const posts = await prisma.post.findMany({
       where: {
         authorId,
+        isDeleted: false,
       },
       select: {
         id: true,
@@ -175,6 +207,7 @@ blogRouter.get("/user/bulk", async (c) => {
         content: true,
         coverImage: true,
         authorName: true,
+        authorId: true,
         likes: true,
         createdAt: true,
       },
@@ -194,7 +227,7 @@ blogRouter.get("/:id", async (c) => {
     const prisma = getPrisma(c.env.DATABASE_URL);
 
     const post = await prisma.post.findUnique({
-      where: { id: postId },
+      where: { id: postId, isDeleted: false },
     });
 
     if (!post) {
@@ -203,6 +236,32 @@ blogRouter.get("/:id", async (c) => {
     }
     c.status(200);
     return c.json({ post });
+  } catch (error) {
+    console.error(error);
+    c.status(500);
+    return c.json({ message: "Internal server error" });
+  }
+});
+
+// soft delete blog
+blogRouter.delete("/:id", async (c) => {
+  const postId = c.req.param("id");
+  try {
+    const prisma = getPrisma(c.env.DATABASE_URL);
+    const userId = c.get("userId");
+
+    const post = await prisma.post.findUnique({ where: { id: postId } });
+    if (!post) return c.json({ message: "Post not found." }, 404);
+
+    if (post.authorId !== userId)
+      return c.json({ message: "Unauthorized." }, 403);
+
+    await prisma.post.update({
+      where: { id: postId },
+      data: { isDeleted: true },
+    });
+
+    return c.json({ message: "Post deleted (soft delete)." });
   } catch (error) {
     console.error(error);
     c.status(500);

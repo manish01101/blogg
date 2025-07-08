@@ -13,12 +13,15 @@ const CreateBlog = () => {
   const [content, setContent] = useState("");
   const [coverImage, setCoverImage] = useState<File | null>(null);
   const user = useRecoilValue(userAtom);
+  const userEmail = user.userEmail || "";
+  const authorId = user.userId || "";
   const [loading, setLoading] = useState(false);
   const token = localStorage.getItem("token");
 
-  let authorName = user;
+  let authorName = userEmail;
+  // console.log("author name is : " + authorName);
   if (authorName) {
-    authorName = user.split("@")[0];
+    authorName = userEmail.split("@")[0];
     authorName = authorName[0].toUpperCase() + authorName.slice(1);
   }
 
@@ -41,6 +44,7 @@ const CreateBlog = () => {
       formData.append("coverImage", coverImage);
     }
     formData.append("authorName", authorName);
+    formData.append("authorId", authorId);
 
     try {
       setLoading(true);
@@ -66,7 +70,7 @@ const CreateBlog = () => {
       setLoading(false);
     }
   };
-
+  // if (!userEmail) return <div>Loading user info...</div>;
   return (
     <div className="max-w-3xl md:min-w-3xl mx-auto p-6 bg-white shadow-lg rounded-lg mt-10">
       <h1 className="text-3xl font-bold text-center text-gray-600 mb-6">

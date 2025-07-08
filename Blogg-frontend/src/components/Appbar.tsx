@@ -34,7 +34,7 @@ const Appbar = () => {
         },
       });
       // console.log(response)
-      setUser(response.data.email);
+      setUser({ userId: response.data.userId, userEmail: response.data.email });
     } catch (error: unknown) {
       console.error("Failed to fetch user:", error);
       if (axios.isAxiosError(error)) {
@@ -56,14 +56,12 @@ const Appbar = () => {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("email");
-    setUser(""); // reset all things
+    setUser({ userEmail: "", userId: "" }); // reset all things
     setBlogState([]);
     setHomeBlogState([]);
     axios.defaults.headers.common["Authorization"] = ""; // Secure logout
     navigate("/");
   };
-
-  if (loading) return <Loading />;
 
   return (
     <nav className="drop-shadow-sm shadow-md py-4">
@@ -90,8 +88,11 @@ const Appbar = () => {
               Contact
             </Link>
           </li>
-
-          {!user ? (
+          {loading ? (
+            <li>
+              <Loading />
+            </li>
+          ) : !user.userEmail ? (
             <>
               <li>
                 <Link
@@ -181,7 +182,9 @@ const Appbar = () => {
 
             <div className="border-t w-2/3 border-gray-200 my-3" />
 
-            {!user ? (
+            {loading ? (
+              <Loading />
+            ) : !user.userEmail ? (
               <>
                 <Link
                   to="/signin"
