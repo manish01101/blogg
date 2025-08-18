@@ -109,11 +109,7 @@ const Home = () => {
             Latest Posts
           </h3>
           {/* Blog Previews */}
-          {loading ? (
-            <p className="text-center text-gray-500 mt-6">
-              Please wait a while...
-            </p>
-          ) : homeBlogs.length === 0 ? (
+          {!loading && homeBlogs.length === 0 ? (
             <p className="text-center text-gray-500 mt-6">
               No blogs available.
             </p>
@@ -129,7 +125,7 @@ const Home = () => {
                   </div>
                 ))}
               </div>
-              {loading && <p className="text-center">Loading more...</p>}
+              {loading && <p className="text-center pt-5">Loading...</p>}
             </section>
           )}
         </div>

@@ -47,7 +47,7 @@ blogRouter.post("/", async (c) => {
     const content = formData.get("content") as string;
     const coverImage = formData.get("coverImage") as File | null;
     const authorName = formData.get("authorName") as string;
-    console.log(authorName)
+    console.log(authorName);
 
     if (!title || !content) {
       return c.json({ message: "Title and content are required!" }, 400);
@@ -126,7 +126,7 @@ blogRouter.put("/like/:id", async (c) => {
 });
 
 // Update a Blog Post (Only Author Can Edit)
-blogRouter.put("/:id", async (c) => {
+blogRouter.put("/update/:id", async (c) => {
   const prisma = getPrisma(c.env.DATABASE_URL);
 
   try {
@@ -244,7 +244,7 @@ blogRouter.get("/:id", async (c) => {
 });
 
 // soft delete blog
-blogRouter.delete("/:id", async (c) => {
+blogRouter.put("/delete/:id", async (c) => {
   const postId = c.req.param("id");
   try {
     const prisma = getPrisma(c.env.DATABASE_URL);
@@ -266,6 +266,139 @@ blogRouter.delete("/:id", async (c) => {
     console.error(error);
     c.status(500);
     return c.json({ message: "Internal server error" });
+  }
+});
+
+// Get user's soft-deleted blogs (Trash)
+blogRouter.get("/user/trash", async (c) => {
+  const authorId = c.get("userId");
+
+  try {
+    const prisma = getPrisma(c.env.DATABASE_URL);
+
+    const posts = await prisma.post.findMany({
+      where: {
+        authorId,
+        isDeleted: true,
+      },
+      select: {
+        id: true,
+        title: true,
+        content: true,
+        coverImage: true,
+        authorName: true,
+        authorId: true,
+        likes: true,
+        createdAt: true,
+      },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return c.json({ posts });
+  } catch (error) {
+    console.error("Error fetching trash:", error);
+    return c.json({ message: "Internal server error" }, 500);
+  }
+});
+
+// bulk restore and delete
+// Bulk Restore Blogs
+blogRouter.put("/restore/bulk", async (c) => {
+  const { ids } = await c.req.json<{ ids: string[] }>();
+  const userId = c.get("userId");
+  const prisma = getPrisma(c.env.DATABASE_URL);
+
+  if (!ids || !Array.isArray(ids) || ids.length === 0) {
+    return c.json({ message: "No IDs provided" }, 400);
+  }
+
+  try {
+    await prisma.post.updateMany({
+      where: {
+        id: { in: ids },
+        authorId: userId,
+        isDeleted: true,
+      },
+      data: { isDeleted: false },
+    });
+
+    return c.json({ message: "Posts restored successfully" });
+  } catch (error) {
+    console.error("Error bulk restoring:", error);
+    return c.json({ message: "Internal server error" }, 500);
+  }
+});
+
+// Bulk Permanently Delete Blogs
+blogRouter.delete("/permanent/bulk", async (c) => {
+  const { ids } = await c.req.json<{ ids: string[] }>();
+  const userId = c.get("userId");
+  const prisma = getPrisma(c.env.DATABASE_URL);
+
+  if (!ids || !Array.isArray(ids) || ids.length === 0) {
+    return c.json({ message: "No IDs provided" }, 400);
+  }
+
+  try {
+    await prisma.post.deleteMany({
+      where: {
+        id: { in: ids },
+        authorId: userId,
+        isDeleted: true, // Only allow deleting from trash
+      },
+    });
+
+    return c.json({ message: "Posts permanently deleted" });
+  } catch (error) {
+    console.error("Error bulk permanent delete:", error);
+    return c.json({ message: "Internal server error" }, 500);
+  }
+});
+
+// Restore a soft-deleted blog
+blogRouter.put("/restore/:id", async (c) => {
+  const postId = c.req.param("id");
+  const userId = c.get("userId");
+  const prisma = getPrisma(c.env.DATABASE_URL);
+
+  try {
+    const post = await prisma.post.findUnique({ where: { id: postId } });
+    if (!post) return c.json({ message: "Post not found." }, 404);
+
+    if (post.authorId !== userId)
+      return c.json({ message: "Unauthorized." }, 403);
+
+    const restoredPost = await prisma.post.update({
+      where: { id: postId },
+      data: { isDeleted: false },
+    });
+
+    return c.json({ message: "Post restored successfully", restoredPost });
+  } catch (error) {
+    console.error("Error restoring post:", error);
+    return c.json({ message: "Internal server error" }, 500);
+  }
+});
+
+// Permanently delete a blog (hard delete)
+blogRouter.delete("/permanent/:id", async (c) => {
+  const postId = c.req.param("id");
+  const userId = c.get("userId");
+  const prisma = getPrisma(c.env.DATABASE_URL);
+
+  try {
+    const post = await prisma.post.findUnique({ where: { id: postId } });
+    if (!post) return c.json({ message: "Post not found." }, 404);
+
+    if (post.authorId !== userId)
+      return c.json({ message: "Unauthorized." }, 403);
+
+    await prisma.post.delete({ where: { id: postId } });
+
+    return c.json({ message: "Post permanently deleted." });
+  } catch (error) {
+    console.error("Error deleting permanently:", error);
+    return c.json({ message: "Internal server error" }, 500);
   }
 });
 

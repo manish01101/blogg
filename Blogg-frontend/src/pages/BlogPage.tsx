@@ -135,7 +135,7 @@ const BlogPage = () => {
             className="flex items-center cursor-pointer"
             onClick={handleLike}
           >
-            {liked ? "❤️ Liked" : "🤍 Like"} ({totalLikes})
+            {liked ? "❤️ Liked" : "🩵 Like"} ({totalLikes})
           </span>
         </div>
         <div

@@ -122,6 +122,14 @@ const Appbar = () => {
               </li>
               <li>
                 <Link
+                  to={"/trash"}
+                  className="text-gray-600 hover:text-green-500"
+                >
+                  Trash
+                </Link>
+              </li>
+              <li>
+                <Link
                   to={"/write"}
                   className="text-gray-600 hover:text-green-500 flex items-center justify-center gap-1"
                 >
@@ -207,6 +215,13 @@ const Appbar = () => {
                   onClick={() => setMenuOpen(false)}
                 >
                   Your Blogs
+                </Link>
+                <Link
+                  to="/trash"
+                  className="text-gray-700 hover:text-green-500 font-medium text-lg"
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Trash
                 </Link>
                 <Link
                   to="/write"

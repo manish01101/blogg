@@ -11,6 +11,7 @@ import BlogPage from "./pages/BlogPage";
 import Appbar from "./components/Appbar";
 import Footer from "./components/Footer";
 import { RecoilRoot } from "recoil";
+import Trash from "./pages/Trash";
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
               <Route path="/contact" element={<Contact />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/signin" element={<Signin />} />
+              <Route path="/trash" element={<Trash />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </div>

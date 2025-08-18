@@ -29,9 +29,13 @@ const BlogPreviewCard: React.FC<BlogCardProps> = ({
     if (!window.confirm("Are you sure you want to delete this blog?")) return;
     try {
       const token = localStorage.getItem("token");
-      await axios.delete(`${BACKEND_URL}/api/v1/blog/${blog.id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axios.put(
+        `${BACKEND_URL}/api/v1/blog/delete/${blog.id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
       setDeleting(false);
       if (onDelete) {
         onDelete(blog.id);
@@ -94,10 +98,10 @@ const BlogPreviewCard: React.FC<BlogCardProps> = ({
             {/* Show Delete button if user is the creator */}
             {currentUserId === blog.authorId && (
               <button
-                className="ml-4 px-4 py-1 bg-red-500 text-white rounded hover:bg-red-600 w-max transition-colors duration-200"
+                className="ml-4 px-4 py-1 bg-red-700 text-white rounded hover:bg-red-600 w-max transition-colors duration-200"
                 onClick={handleDelete}
               >
-                {deleting ? "Deleting..." : "Delete"}
+                {deleting ? "Moving..." : "Move to Trash"}
               </button>
             )}
           </span>

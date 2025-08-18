@@ -48,10 +48,7 @@ const Blogs = () => {
       }
     };
 
-    // Fetch only if blogs are empty
-    if (blogs.length === 0) {
-      fetchBlogs();
-    }
+    fetchBlogs();
   }, [blogs, setBlogs]); // Dependencies to prevent redundant requests
 
   const handleDelete = (id: string) => {
