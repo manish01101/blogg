@@ -1,28 +1,68 @@
-name: Deploy Worker
+name: Deploy Backend Worker
 
 on:
   push:
     branches:
-      - main   # deploy when pushing to main
+      - main
+    paths:
+      - "Blogg-backend/**"   # only run when backend files change
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
 
-      - name: Setup Node.js
+    defaults:
+      run:
+        working-directory: Blogg-backend  # set backend folder as working dir
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js (use LTS)
         uses: actions/setup-node@v3
         with:
           node-version: 20
+          cache: 'npm'
+          cache-dependency-path: Blogg-backend/package-lock.json
 
       - name: Install dependencies
-        working-directory: Blogg-backend
         run: npm ci
 
-      - name: Publish to Cloudflare Workers
-        working-directory: Blogg-backend
-        run: npx wrangler deploy
+      - name: Deploy to Cloudflare Workers
+        run: npx wrangler deploy --minify
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+
+
+# name: Deploy Worker
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
+#     defaults:
+#       run:
+#         working-directory: Blogg-backend
+#     steps:
+#       - uses: actions/checkout@v3
+
+#       - name: Setup Node.js
+#         uses: actions/setup-node@v3
+#         with:
+#           node-version: 18
+
+#       - name: Install dependencies
+#         run: npm ci
+
+#       - name: Deploy to Cloudflare Workers
+#         run: npx wrangler deploy src/index.ts --name=blogg-backend --compatibility-date=2025-08-18
+#         env:
+#           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+#           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

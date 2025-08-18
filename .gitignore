@@ -1,6 +1,6 @@
 wrangler.jsonc
 others/
-
+.DS_Store
 # Logs
 logs
 *.log
