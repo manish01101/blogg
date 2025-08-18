@@ -8,7 +8,15 @@
   // ],
   "vars": {
     "DATABASE_URL":"db_url",
-    "JWT_SECRET":"your_secret"
+    "JWT_SECRET":"your_secret",
+
+
+    // cloudinary service
+    "CLOUDINARY_CLOUD_NAME":"",
+    "CLOUDINARY_API_KEY":"",
+    "CLOUDINARY_API_SECRET":"",
+    "CLOUDINARY_UPLOAD_PRESET":""
+
   }
   // "kv_namespaces": [
   //   {
