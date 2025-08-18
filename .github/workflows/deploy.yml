@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - main
-    paths:
-      - "Blogg-backend/**"   # only run when backend files change
+    # paths:
+    #   - "Blogg-backend/**"   # only run when backend files change
 
 jobs:
   deploy:
