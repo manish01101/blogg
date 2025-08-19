@@ -16,6 +16,10 @@ jobs:
       run:
         working-directory: Blogg-backend # set backend folder as working dir
 
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -32,17 +36,13 @@ jobs:
 
       - name: Publish secrets to Cloudflare
         run: |
-          echo "${{ secrets.DATABASE_URL }}" | npx wrangler secret put DATABASE_URL --env production 
-          echo "${{ secrets.JWT_SECRET }}" | npx wrangler secret put JWT_SECRET --env production 
-          echo "${{ secrets.CLOUDINARY_CLOUD_NAME }}" | npx wrangler secret put CLOUDINARY_CLOUD_NAME --env production 
-          echo "${{ secrets.CLOUDINARY_API_KEY }}" | npx wrangler secret put CLOUDINARY_API_KEY --env production 
-          echo "${{ secrets.CLOUDINARY_API_SECRET }}" | npx wrangler secret put CLOUDINARY_API_SECRET --env production 
-          echo "${{ secrets.TURNSTILE_SECRET_KEY }}" | npx wrangler secret put TURNSTILE_SECRET_KEY --env production 
-        
+          echo "${{ secrets.DATABASE_URL }}" | npx wrangler secret put DATABASE_URL
+          echo "${{ secrets.JWT_SECRET }}" | npx wrangler secret put JWT_SECRET
+          echo "${{ secrets.CLOUDINARY_CLOUD_NAME }}" | npx wrangler secret put CLOUDINARY_CLOUD_NAME
+          echo "${{ secrets.CLOUDINARY_API_KEY }}" | npx wrangler secret put CLOUDINARY_API_KEY
+          echo "${{ secrets.CLOUDINARY_API_SECRET }}" | npx wrangler secret put CLOUDINARY_API_SECRET
+          echo "${{ secrets.TURNSTILE_SECRET_KEY }}" | npx wrangler secret put TURNSTILE_SECRET_KEY
 
       - name: Deploy to Cloudflare Workers
         # run: npx wrangler deploy src/index.ts --name=blogg-backend --compatibility-date=2025-08-18
         run: npx wrangler deploy
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
