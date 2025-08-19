@@ -7,6 +7,7 @@ import { userAtom } from "../store/atoms/user";
 import Loading from "./Loading";
 import { SignupInput } from "../types";
 import toast from "react-hot-toast";
+import { Turnstile } from "@marsidev/react-turnstile";
 
 const Auth = ({ type }: { type: "signup" | "signin" }) => {
   const setUser = useSetRecoilState(userAtom);
@@ -95,6 +96,19 @@ const Auth = ({ type }: { type: "signup" | "signin" }) => {
                 }));
               }}
             />
+
+            {/* cloudflare turnstile */}
+            <Turnstile
+              className="pt-3 rounded-full"
+              onSuccess={(token) => {
+                setPostInputs((c) => ({
+                  ...c,
+                  turnstileToken: token,
+                }));
+              }}
+              siteKey="0x4AAAAAABtGBbRtmSaDmBmj"
+            />
+
             <button
               type="button"
               onClick={sendRequest}

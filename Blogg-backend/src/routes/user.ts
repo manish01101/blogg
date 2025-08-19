@@ -2,11 +2,13 @@ import { Hono } from "hono";
 import { sign, verify } from "hono/jwt";
 import bcrypt from "bcryptjs"; // Secure password hashing
 import { getPrisma } from "../utils/prisma";
+import { siteverify } from "../utils/siteVerify";
 
 export const userRouter = new Hono<{
   Bindings: {
     DATABASE_URL: string;
     JWT_SECRET: string;
+    TURNSTILE_SECRET_KEY: string;
   };
   Variables: {
     userId: string;
@@ -65,7 +67,17 @@ userRouter.get("/auth/me", async (c) => {
 // Signup route (Register user)
 userRouter.post("/signup", async (c) => {
   try {
-    const { email, password } = await c.req.json();
+    const { email, password, turnstileToken } = await c.req.json();
+    // turnstile fn
+    let formData = new FormData();
+    formData.append("secret", c.env.TURNSTILE_SECRET_KEY);
+    formData.append("response", turnstileToken);
+
+    const data = await siteverify(formData);
+    if (!data.success) {
+      return c.json({ message: "Invalid reCAPTCHA token" }, 403);
+    }
+
     if (!email || !password) {
       return c.json({ message: "Email and password are required!" }, 400);
     }
@@ -106,7 +118,17 @@ userRouter.post("/signup", async (c) => {
 // Sign-in route (Login user)
 userRouter.post("/signin", async (c) => {
   try {
-    const { email, password } = await c.req.json();
+    const { email, password, turnstileToken } = await c.req.json();
+    // turnstile fn
+    let formData = new FormData();
+    formData.append("secret", c.env.TURNSTILE_SECRET_KEY);
+    formData.append("response", turnstileToken);
+
+    const data = await siteverify(formData);
+    if (!data.success) {
+      return c.json({ message: "Invalid reCAPTCHA token" }, 403);
+    }
+
     if (!email || !password) {
       return c.json({ message: "Email and password are required!" }, 400);
     }
