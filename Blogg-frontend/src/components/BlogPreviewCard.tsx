@@ -4,6 +4,7 @@ import DOMPurify from "dompurify";
 import { BlogCardProps } from "../types";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
+import toast from "react-hot-toast";
 
 const BlogPreviewCard: React.FC<BlogCardProps> = ({
   blog,
@@ -42,7 +43,7 @@ const BlogPreviewCard: React.FC<BlogCardProps> = ({
       }
     } catch (err) {
       console.error(err);
-      alert("Failed to delete blog. Please try again.");
+      toast.error("Failed to delete blog. Please try again.");
     }
   };
 

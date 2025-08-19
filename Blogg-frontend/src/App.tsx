@@ -12,12 +12,14 @@ import Appbar from "./components/Appbar";
 import Footer from "./components/Footer";
 import { RecoilRoot } from "recoil";
 import Trash from "./pages/Trash";
+import { Toaster } from "react-hot-toast";
 
 function App() {
   return (
     <RecoilRoot>
       <BrowserRouter>
         <div className="flex flex-col min-h-screen">
+          <Toaster position="top-right" reverseOrder={false} />
           <Appbar />
           <div className="flex-grow">
             <Routes>

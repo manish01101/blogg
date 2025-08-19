@@ -13,6 +13,7 @@ export const app = new Hono<{
 app.use(
   "*",
   cors({
+    // origin: "*",
     origin: ["https://blogg-cyan-mu.vercel.app", "http://localhost:5173"],
     credentials: true, // Allow credentials like cookies & authentication headers
     allowMethods: ["GET", "POST", "PUT", "DELETE"], // Allowed HTTP methods

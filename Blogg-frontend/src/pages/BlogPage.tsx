@@ -7,6 +7,7 @@ import { blogState, homeBlogState } from "../store/atoms/blogs";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import Loading from "../components/Loading";
 import { Blog } from "../types";
+import toast from "react-hot-toast";
 
 const BlogPage = () => {
   const location = useLocation();
@@ -93,7 +94,7 @@ const BlogPage = () => {
       }
     } catch (error) {
       console.error("Error updating like status", error);
-      alert("Failed to update like. Please try again.");
+      toast.error("Failed to update like. Please try again.");
 
       setLiked((prev) => !prev);
       setTotalLikes((prev) => (liked ? prev - 1 : prev + 1));

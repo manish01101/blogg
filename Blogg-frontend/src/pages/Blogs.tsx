@@ -6,6 +6,7 @@ import { blogState } from "../store/atoms/blogs";
 import { useRecoilState, useRecoilValue } from "recoil";
 import Loading from "../components/Loading";
 import { userAtom } from "../store/atoms/user";
+import toast from "react-hot-toast";
 
 const Blogs = () => {
   const [blogs, setBlogs] = useRecoilState(blogState);
@@ -40,8 +41,10 @@ const Blogs = () => {
         console.error(error);
         if (axios.isAxiosError(error)) {
           setError(error.response?.data?.message || error.message);
+          toast.error(error.response?.data?.message || error.message);
         } else {
           setError("Something went wrong!");
+          toast.error("Something went wrong!");
         }
       } finally {
         setLoading(false);

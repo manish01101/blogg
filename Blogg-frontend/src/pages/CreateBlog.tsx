@@ -6,6 +6,7 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css"; // Quill styles
 import { useRecoilValue } from "recoil";
 import { userAtom } from "../store/atoms/user";
+import toast from "react-hot-toast";
 
 const CreateBlog = () => {
   const navigate = useNavigate();
@@ -33,7 +34,7 @@ const CreateBlog = () => {
 
   const handleSubmit = async () => {
     if (!title || !content) {
-      alert("Title and content are required!");
+      toast.error("Title and content are required!");
       return;
     }
 
@@ -60,12 +61,12 @@ const CreateBlog = () => {
       );
 
       if (response.status === 201) {
-        alert("Blog created successfully!");
+        toast.success("Blog created successfully!");
         navigate("/blogs"); // Redirect to blogs page
       }
     } catch (error) {
       console.error("Blog creation failed:", error);
-      alert("Failed to create blog. Please try again.");
+      toast.error("Failed to create blog. Please try again.");
     } finally {
       setLoading(false);
     }

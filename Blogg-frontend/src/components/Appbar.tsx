@@ -8,6 +8,7 @@ import { userAtom } from "../store/atoms/user";
 import Loading from "./Loading";
 import { blogState, homeBlogState } from "../store/atoms/blogs";
 import { TfiWrite } from "react-icons/tfi";
+import toast from "react-hot-toast";
 
 const Appbar = () => {
   const navigate = useNavigate();
@@ -38,9 +39,9 @@ const Appbar = () => {
     } catch (error: unknown) {
       console.error("Failed to fetch user:", error);
       if (axios.isAxiosError(error)) {
-        alert(error.response?.data?.message || error.message);
+        toast.error(error.response?.data?.message || error.message);
       } else {
-        alert("Something went wrong!");
+        toast.error("Something went wrong!");
       }
       handleLogout(); // auto logout if token is invalid
     } finally {

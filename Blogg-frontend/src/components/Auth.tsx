@@ -6,6 +6,7 @@ import { useSetRecoilState } from "recoil";
 import { userAtom } from "../store/atoms/user";
 import Loading from "./Loading";
 import { SignupInput } from "../types";
+import toast from "react-hot-toast";
 
 const Auth = ({ type }: { type: "signup" | "signin" }) => {
   const setUser = useSetRecoilState(userAtom);
@@ -33,17 +34,17 @@ const Auth = ({ type }: { type: "signup" | "signin" }) => {
           userEmail: email,
           userId: userId,
         });
-        alert(message);
+        toast.success(message);
         navigate("/");
       } else {
-        alert("Unexpected response from server.");
+        toast.error("Unexpected response from server.");
       }
     } catch (error: unknown) {
       console.error(error);
       if (axios.isAxiosError(error)) {
-        alert(error.response?.data?.message || error.message);
+        toast.error(error.response?.data?.message || error.message);
       } else {
-        alert("Something went wrong!");
+        toast.error("Something went wrong!");
       }
     } finally {
       setLoading(false);
