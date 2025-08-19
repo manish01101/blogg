@@ -89,11 +89,7 @@ const Appbar = () => {
               Contact
             </Link>
           </li>
-          {loading ? (
-            <li>
-              <Loading />
-            </li>
-          ) : !user.userEmail ? (
+          {!user.userEmail ? (
             <>
               <li>
                 <Link

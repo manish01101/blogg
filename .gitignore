@@ -1,6 +1,7 @@
-wrangler.jsonc
+# wrangler.jsonc
 others/
 .DS_Store
+.dev.vars
 # Logs
 logs
 *.log
