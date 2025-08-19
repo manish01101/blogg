@@ -32,12 +32,12 @@ jobs:
 
       - name: Publish secrets to Cloudflare
         run: |
-          echo "${{ secrets.DATABASE_URL }}" | npx wrangler secret put DATABASE_URL --env production --yes
-          echo "${{ secrets.JWT_SECRET }}" | npx wrangler secret put JWT_SECRET --env production --yes
-          echo "${{ secrets.CLOUDINARY_CLOUD_NAME }}" | npx wrangler secret put CLOUDINARY_CLOUD_NAME --env production --yes
-          echo "${{ secrets.CLOUDINARY_API_KEY }}" | npx wrangler secret put CLOUDINARY_API_KEY --env production --yes
-          echo "${{ secrets.CLOUDINARY_API_SECRET }}" | npx wrangler secret put CLOUDINARY_API_SECRET --env production --yes
-          echo "${{ secrets.TURNSTILE_SECRET_KEY }}" | npx wrangler secret put TURNSTILE_SECRET_KEY --env production --yes
+          echo "${{ secrets.DATABASE_URL }}" | npx wrangler secret put DATABASE_URL --env production 
+          echo "${{ secrets.JWT_SECRET }}" | npx wrangler secret put JWT_SECRET --env production 
+          echo "${{ secrets.CLOUDINARY_CLOUD_NAME }}" | npx wrangler secret put CLOUDINARY_CLOUD_NAME --env production 
+          echo "${{ secrets.CLOUDINARY_API_KEY }}" | npx wrangler secret put CLOUDINARY_API_KEY --env production 
+          echo "${{ secrets.CLOUDINARY_API_SECRET }}" | npx wrangler secret put CLOUDINARY_API_SECRET --env production 
+          echo "${{ secrets.TURNSTILE_SECRET_KEY }}" | npx wrangler secret put TURNSTILE_SECRET_KEY --env production 
         
 
       - name: Deploy to Cloudflare Workers
