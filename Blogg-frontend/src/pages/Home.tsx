@@ -6,6 +6,7 @@ import BlogPreviewCard from "../components/BlogPreviewCard";
 import { useRecoilState } from "recoil";
 import { homeBlogState } from "../store/atoms/blogs";
 import { useNavigate } from "react-router-dom";
+import Loading from "../components/Loading";
 
 const Home = () => {
   const [homeBlogs, setHomeBlogs] = useRecoilState(homeBlogState);
@@ -125,7 +126,7 @@ const Home = () => {
                   </div>
                 ))}
               </div>
-              {loading && <p className="text-center pt-5">Loading...</p>}
+              {loading && <Loading />}
             </section>
           )}
         </div>

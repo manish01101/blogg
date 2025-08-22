@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
 import { Blog } from "../types";
+import Loading from "../components/Loading";
 
 const Trash = () => {
   const [blogs, setBlogs] = useState<Blog[]>([]);
@@ -166,7 +167,7 @@ const Trash = () => {
       </div>
 
       {loading ? (
-        <p className="text-gray-500 animate-pulse">Loading...</p>
+        <Loading />
       ) : blogs.length === 0 ? (
         <p className="text-gray-500 text-center mt-20">No deleted blogs 🎉</p>
       ) : (
